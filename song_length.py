@@ -5,7 +5,7 @@ def main():
     songs = pd.read_csv("songs.csv")
     get_song_length_data(songs)
     plot_song_length(songs)
-    evaluate_data(songs)
+    #evaluate_data(songs)
     #assert songs["song_id"].is_unique
 
 def evaluate_data(data):
@@ -14,7 +14,7 @@ def evaluate_data(data):
 
 
 def get_song_length_data(songs):
-    valid_data = songs.dropna(subset=["duration_seconds"])
+    valid_data = songs.dropna(subset=["duration_seconds"]).copy()
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
     #median_length = valid_data["duration_seconds"].median()
     #mean_length = valid_data["duration_seconds"].mean()
@@ -23,10 +23,9 @@ def get_song_length_data(songs):
     #print("mean ", mean_length)
     #print("sd ", song_length_sd)
 
-    #tried collecting five number summary using .describe()
-    summary = valid_data["duration_seconds"].describe()
-    number_summary = summary.loc[["min","25%","50%", "75%", "max", "std"]]
-
+    #tried collecting number summary using .describe()
+    data_descript = valid_data["duration_seconds"].describe()
+    number_summary = data_descript.loc[["min","25%","50%", "75%", "max", "std"]]
     print(number_summary)
 
     
@@ -34,9 +33,9 @@ def get_song_length_data(songs):
 def plot_song_length(songs):
     valid_data = songs.dropna(subset=["year", "duration_seconds"])
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
-    median_length_by_year = valid_data.groupby("year")["duration_seconds"].median()
-    
-    print("yearly median", median_length_by_year)
+    mean_length_by_year = valid_data.groupby("year")["duration_seconds"].mean()
+    print("Mean song length for each year:")
+    print( mean_length_by_year)
     
 
 if __name__ == "__main__":
