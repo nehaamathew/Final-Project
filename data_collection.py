@@ -22,11 +22,9 @@ def get_data(url, parameters):
     return response.json()
 
 
-#NOT IMPLEMENTED YET, NEED TO REQUEST AND RETURN RETURN ALL SONG IDS BELONGING TO ONE OF THE POPULAR_IDS POOLS
 def get_popular_ids():
     popular_ids = set()
     for id in POPULAR_IDS:
-        endpoint = "songLists/" + str(id) + "/songs"
         parameters = {"songTypes": "Original", "maxResults": 1,
                       "getTotalCount": "true", "sort": "Name"}
         total = get_data(API + "songLists/" + str(id) + "/songs", parameters)["totalCount"]
@@ -34,7 +32,6 @@ def get_popular_ids():
         for start in range(0, total, BATCH_SIZE):
             parameters = {"songTypes": "Original", "start": start,
                           "maxResults": BATCH_SIZE, "sort": "Name"}
-            #items = get_data(endpoint, parameters)["items"]
             items = get_data(API + "songLists/" + str(id) + "/songs" , parameters)["items"]
             if len(items) != min(BATCH_SIZE, total - start):
                 raise ValueError("Popularity pool page is incomplete.")
@@ -45,7 +42,6 @@ def get_popular_ids():
         popular_ids.update(popular_songs)
     print("Found ", len(popular_ids), " popular songs")
     return popular_ids
-
 
 
 def make_row(song, year, page, popular_ids):
