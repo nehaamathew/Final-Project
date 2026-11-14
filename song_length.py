@@ -14,14 +14,21 @@ def evaluate_data(data):
 
 
 def get_song_length_data(songs):
-    valid_data = songs.dropna(subset=["year", "duration_seconds"])
+    valid_data = songs.dropna(subset=["duration_seconds"])
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
-    median_length = valid_data["duration_seconds"].median()
-    mean_length = valid_data["duration_seconds"].mean()
-    song_length_sd = valid_data["duration_seconds"].std()
-    print("median ", median_length)
-    print("mean ", mean_length)
-    print("sd ", song_length_sd)
+    #median_length = valid_data["duration_seconds"].median()
+    #mean_length = valid_data["duration_seconds"].mean()
+    #song_length_sd = valid_data["duration_seconds"].std()
+    #print("median ", median_length)
+    #print("mean ", mean_length)
+    #print("sd ", song_length_sd)
+
+    #tried collecting five number summary using .describe()
+    summary = valid_data["duration_seconds"].describe()
+    number_summary = summary.loc[["min","25%","50%", "75%", "max", "std"]]
+
+    print(number_summary)
+
     
 
 def plot_song_length(songs):
