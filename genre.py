@@ -1,19 +1,32 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+SELECT_GENRES = ["pop", "j-pop", "rock", "electropop", "edm",
+                 "jazz", "metal",
+                 "traditional japanese music style"]
+
+
 def main():
     songs = pd.read_csv("songs.csv")
-    get_genre_data(songs)
-    plot_genre_trends(songs)
-    plot_popular_genre_trends(songs)
+    popular_songs = songs.loc[songs["popular"] == 1]
 
-    
+    plot_genre_trends(
+        songs,
+        "Genre Share Among All Tagged Songs",
+        "genre_trends.png",
+    )
+    plot_genre_trends(
+        popular_songs,
+        "Genre Share Among Popular Tagged Songs",
+        "pop_genre_trends.png",
+    )
+
+
 def get_genre_data(songs):
     valid_data = songs["genre"].dropna()
-    select_genres = ["pop", "j-pop", "rock", "electropop", "edm", "jazz", "metal", "trance", "traditional japanese music style"]
     genre_count = {}
 
-    for genre in select_genres:
+    for genre in SELECT_GENRES:
         genre_count[genre] = 0
 
     for genre_tags in valid_data:
@@ -27,72 +40,51 @@ def get_genre_data(songs):
     print(genre_count)
 
 
-def plot_genre_trends(songs):
-    valid_data = songs.dropna(subset=["year", "genre"])
+def plot_genre_trends(songs, title, filename):
+    valid_data = songs.dropna(subset=["song_id", "year", "genre"])
+    yearly_genre_share = {}
 
-    songs_by_year = valid_data.groupby("year")
-    select_genres = ["pop", "j-pop", "rock", "electropop", "edm", "jazz", "metal", "trance", "traditional japanese music style"]
-    yearly_genre_count = {}
-  
-    for year, year_data in songs_by_year:
-        year_genre_count = {}
-        for genre in select_genres:
-            year_genre_count[genre] = 0
-            for genre_tags in year_data["genre"]:
-                song_genres = genre_tags.split("|")
-                song_genres = [item.lower() for item in song_genres]
+    for year, year_data in valid_data.groupby("year"):
+        genre_counts = {genre: 0 for genre in SELECT_GENRES}
+        total_tagged_songs = 0
+
+        # Each song gets one vote per genre even if it has duplicate rows
+        for _, song_rows in year_data.groupby("song_id"):
+            song_genres = set()
+            for genre_tags in song_rows["genre"]:
+                for tag in genre_tags.split("|"):
+                    tag = tag.strip().lower()
+                    if tag:
+                        song_genres.add(tag)
+
+            if song_genres:
+                total_tagged_songs += 1
                 for genre in song_genres:
-                    if genre in year_genre_count:
-                        year_genre_count[genre] += 1
-        yearly_genre_count[year] = year_genre_count
-    print(yearly_genre_count)
+                    if genre in genre_counts:
+                        genre_counts[genre] += 1
 
-    years = sorted(yearly_genre_count)
-    
-    for genre in select_genres:
-        counts = [yearly_genre_count[year][genre] for year in years]
-        plt.plot(years, counts, label=genre)
-    plt.title("Selected Genre Counts by Year")
-    plt.xlabel("Publication year")
-    plt.xticks(years, rotation=45)
-    plt.ylabel("Number of songs with genre tag")
-    plt.legend(title="Genre")
-    plt.savefig("genre_trends.png", bbox_inches="tight")
-    plt.close()
+        if total_tagged_songs > 0:
+            yearly_genre_share[year] = {
+                genre: 100 * count / total_tagged_songs
+                for genre, count in genre_counts.items()
+            }
 
-def plot_popular_genre_trends(songs):
-    valid_data = songs.dropna(subset=["year", "genre", "popular"])
-    valid_data = valid_data.loc[valid_data["popular"]==1]
+        print(f"{title}, {year}: {total_tagged_songs} tagged songs")
 
-    songs_by_year = valid_data.groupby("year")
-    select_genres = ["pop", "j-pop", "rock", "electropop", "edm", "jazz", "metal", "trance", "traditional japanese music style"]
-    yearly_genre_count = {}
-  
-    for year, year_data in songs_by_year:
-        year_genre_count = {}
-        for genre in select_genres:
-            year_genre_count[genre] = 0
-            for genre_tags in year_data["genre"]:
-                song_genres = genre_tags.split("|")
-                song_genres = [item.lower() for item in song_genres]
-                for genre in song_genres:
-                    if genre in year_genre_count:
-                        year_genre_count[genre] += 1
-        yearly_genre_count[year] = year_genre_count
-    print(yearly_genre_count)
+    years = sorted(yearly_genre_share)
+    fig, ax = plt.subplots(figsize=(10, 5))
 
-    years = sorted(yearly_genre_count)
-    
-    for genre in select_genres:
-        counts = [yearly_genre_count[year][genre] for year in years]
-        plt.plot(years, counts, label=genre)
-    plt.title("Selected Genre Counts for Popular Songs by Year")
-    plt.xlabel("Publication year")
-    plt.xticks(years, rotation=45)
-    plt.ylabel("Number of songs with genre tag")
-    plt.legend(title="Genre")
-    plt.savefig("pop_genre_trends.png", bbox_inches="tight")
-    plt.close()
+    for genre in SELECT_GENRES:
+        shares = [yearly_genre_share[year][genre] for year in years]
+        ax.plot(years, shares, label=genre)
+
+    ax.set_title(title)
+    ax.set_xlabel("Publication year")
+    ax.set_ylabel("Songs with genre tag (%)")
+    ax.set_xticks(years[::2])
+    ax.legend(title="Genre", loc="upper left", bbox_to_anchor=(1, 1))
+    fig.savefig(filename, bbox_inches="tight")
+    plt.close(fig)
 
 
 if __name__ == "__main__":
