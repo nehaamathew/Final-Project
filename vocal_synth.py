@@ -1,10 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-sns.set_theme()
 
 VOCALOIDS = ["Kagamine Rin", "Kasane Teto", "GUMI"]
+
+def get_vocaloid(vocaloid):
+    for voca in VOCALOIDS:
+        if vocaloid.lower().find(voca.lower()) != -1:
+            return voca
 
 
 def get_voca_count(songs):
@@ -14,14 +17,17 @@ def get_voca_count(songs):
     for vocaloid in VOCALOIDS:
         vocaloid_count[vocaloid] = 0
 
-    for vocal_synths in valid_data:
-        vocal_synth = vocal_synths.split("|")
+    for vocal_synths_song in valid_data:
+        vocal_synth = vocal_synths_song.split("|")
         vocal_synth = [item.lower() for item in vocal_synth]
+        specific_voca = set()
 
         for vocaloid in vocal_synth:
-            for voca in VOCALOIDS:
-                if vocaloid.lower().find(voca.lower()) != -1:
-                    vocaloid_count[voca] += 1
+            specific_voca.add(get_vocaloid(vocaloid))
+
+        for voca in specific_voca:
+            if voca in vocaloid_count:
+                vocaloid_count[voca] += 1
     return pd.Series(vocaloid_count)
 
 
@@ -44,7 +50,7 @@ def plot_count_per_year(songs):
     plt.ylabel("Number of songs with synthesizer")
     plt.xticks(data["year"], rotation=45)
     plt.title("Selected Vocal Synthesizers Count by Year")
-    # sns.relplot(x="year", y="Kagamine Rin", data=data, kind="line")
+
 
     plt.savefig("vocal_synth_trends.png")
 
