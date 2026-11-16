@@ -39,7 +39,10 @@ def plot_count_per_year(songs):
     fig, ax = plt.subplots(1)
     
     data.plot(ax=ax, x="year")
+    plt.xlabel("Published Year")
+    plt.ylabel("Number of songs with synthesizer")
     plt.xticks(data["year"], rotation=45)
+    plt.title("Selected Vocal Synthesizers Count by Year")
     #sns.relplot(x="year", y="Kagamine Rin", data=data, kind="line")
 
     plt.savefig("vocal_synth_trends.png")
