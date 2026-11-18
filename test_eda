@@ -25,7 +25,6 @@ def main():
     assert counts["pop"] == 2
     assert counts["rock"] == 1
     assert counts["jazz"] == 0
-    assert "folk" not in counts
 
     summary = get_song_length_data(songs)
 

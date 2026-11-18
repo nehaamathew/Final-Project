@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 def main():
     songs = pd.read_csv("songs.csv")
     get_song_length_data(songs)
+    plot_yearly_song_length(songs)
     plot_song_length(songs)
 
 
@@ -27,6 +28,11 @@ def get_song_length_data(songs):
 
 
 def plot_song_length(songs):
+    valid_data = songs.dropna("duration_seconds")
+    valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
+
+
+def plot_yearly_song_length(songs):
     valid_data = songs.dropna(subset=["year", "duration_seconds"])
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
     mean_length_by_year = valid_data.groupby("year")["duration_seconds"].mean()
