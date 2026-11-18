@@ -10,6 +10,7 @@ def main():
     songs = pd.read_csv("songs.csv")
     popular_songs = songs.loc[songs["popular"] == 1]
     get_genre_data(songs)
+    plot_genre_counts(songs)
 
     plot_genre_trends(
         songs,
@@ -40,6 +41,24 @@ def get_genre_data(songs):
 
     print(genre_count)
     return genre_count
+
+
+def plot_genre_counts(songs):
+    genre_counts = get_genre_data(songs)
+    counts = pd.Series(genre_counts).sort_values()
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    bars = ax.barh(counts.index, counts.values)
+    ax.bar_label(bars, padding=3)
+    ax.margins(x=0.12)
+
+    ax.set_title("Frequency of Selected Genre Tags")
+    ax.set_xlabel("Number of tag occurrences")
+    ax.set_ylabel("Genre tag")
+
+    fig.tight_layout()
+    fig.savefig("genre_counts.png", bbox_inches="tight")
+    plt.close(fig)
 
 
 def plot_genre_trends(songs, title, filename):
