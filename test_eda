@@ -3,7 +3,7 @@ import pandas as pd
 
 from genre import get_genre_data
 from song_length import get_song_length_data
-from vocal_synth import count_per_year
+from vocal_synth import share_per_year
 
 
 def main():
@@ -16,10 +16,10 @@ def main():
         "vocaloid": ["GUMI|Kagamine Rin", "GUMI", None, "Kasane Teto"],
     })
 
-    counts = count_per_year(songs)
-    assert counts.loc[2020, "GUMI"] == 2
-    assert counts.loc[2020, "Kagamine Rin"] == 1
-    assert counts.loc[2021, "Kasane Teto"] == 1
+    counts = share_per_year(songs)
+    assert counts.loc[2020, "GUMI"] == 100
+    assert counts.loc[2020, "Kagamine Rin"] == 50
+    assert counts.loc[2021, "Kasane Teto"] == 100
 
     counts = get_genre_data(songs)
     assert counts["pop"] == 2

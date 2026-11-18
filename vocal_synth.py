@@ -31,20 +31,20 @@ def get_voca_count(songs):
     return pd.Series(vocaloid_count)
 
 
-def count_per_year(songs):
+def share_per_year(songs):
     valid_data = songs[["year", "vocaloid"]].dropna()
-    voca_count_year = valid_data.groupby("year").apply(get_voca_count)
+    voca_share_year = valid_data.groupby("year").apply(get_voca_count)
     total_songs = valid_data.groupby("year").count()
     for vocaloid in VOCALOIDS:
-        voca_count_year[vocaloid] = (100 * voca_count_year[vocaloid] 
+        voca_share_year[vocaloid] = (100 * voca_share_year[vocaloid] 
                                     / total_songs["vocaloid"])
 
-    print(voca_count_year)
-    return voca_count_year
+    print(voca_share_year)
+    return voca_share_year
 
 
-def plot_count_per_year(songs):
-    data = count_per_year(songs).reset_index()
+def plot_share_per_year(songs):
+    data = share_per_year(songs).reset_index()
     # data = data.set_index("year")
     fig, ax = plt.subplots(1)
 
@@ -60,7 +60,7 @@ def plot_count_per_year(songs):
 
 def main():
     songs = pd.read_csv("songs.csv")
-    plot_count_per_year(songs)
+    plot_share_per_year(songs)
 
 
 if __name__ == "__main__":
