@@ -34,7 +34,10 @@ def get_voca_count(songs):
 def count_per_year(songs):
     valid_data = songs[["year", "vocaloid"]].dropna()
     voca_count_year = valid_data.groupby("year").apply(get_voca_count)
-    # voca_count_year["Number of Songs"] = valid_data.groupby("year").count()
+    total_songs = valid_data.groupby("year").count()
+    for vocaloid in VOCALOIDS:
+        voca_count_year[vocaloid] = (100 * voca_count_year[vocaloid] 
+                                    / total_songs["vocaloid"])
 
     print(voca_count_year)
     return voca_count_year
@@ -47,12 +50,12 @@ def plot_count_per_year(songs):
 
     data.plot(ax=ax, x="year")
     plt.xlabel("Published Year")
-    plt.ylabel("Number of songs with synthesizer")
+    plt.ylabel("Songs with synthesizer (%)")
     plt.xticks(data["year"], rotation=45)
-    plt.title("Selected Vocal Synthesizers Count by Year")
+    plt.title("Selected Vocal Synthesizers Share by Year")
 
 
-    plt.savefig("vocal_synth_trends.png")
+    plt.savefig("vocal_synth_trends.png", bbox_inches="tight")
 
 
 def main():
