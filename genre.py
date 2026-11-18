@@ -9,6 +9,7 @@ SELECT_GENRES = ["pop", "j-pop", "rock", "electropop", "edm",
 def main():
     songs = pd.read_csv("songs.csv")
     popular_songs = songs.loc[songs["popular"] == 1]
+    get_genre_data(songs)
 
     plot_genre_trends(
         songs,
@@ -38,6 +39,7 @@ def get_genre_data(songs):
                 genre_count[genre] += 1
 
     print(genre_count)
+    return genre_count
 
 
 def plot_genre_trends(songs, title, filename):

@@ -1,0 +1,43 @@
+import pandas as pd
+
+
+from genre import get_genre_data
+from song_length import get_song_length_data
+from vocal_synth import count_per_year
+
+
+def main():
+    songs = pd.DataFrame({
+        "song_id": [1, 2, 3, 4],
+        "year": [2020, 2020, 2020, 2021],
+        "genre": ["rock|pop", "folk", None, "pop"],
+        "popular": [1, 0, 1, 0],
+        "duration_seconds": [100, 200, 0, 240],
+        "vocaloid": ["GUMI|Kagamine Rin", "GUMI", None, "Kasane Teto"],
+    })
+
+    counts = count_per_year(songs)
+    assert counts.loc[2020, "GUMI"] == 2
+    assert counts.loc[2020, "Kagamine Rin"] == 1
+    assert counts.loc[2021, "Kasane Teto"] == 1
+
+    counts = get_genre_data(songs)
+    assert counts["pop"] == 2
+    assert counts["rock"] == 1
+    assert counts["jazz"] == 0
+    assert "folk" not in counts
+
+    summary = get_song_length_data(songs)
+
+    assert summary["min"] == 100
+    assert summary["25%"] == 150
+    assert summary["50%"] == 200
+    assert summary["75%"] == 220
+    assert summary["max"] == 240
+    assert round(summary["std"], 2) == 72.11
+
+    print("All EDA tests passed!")
+
+
+if __name__ == "__main__":
+    main()
