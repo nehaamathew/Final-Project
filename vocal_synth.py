@@ -35,8 +35,18 @@ def count_per_year(songs):
     valid_data = songs[["year", "vocaloid"]].dropna()
     voca_count_year = valid_data.groupby("year").apply(get_voca_count)
 
-    print(voca_count_year)
+    #print(voca_count_year)
     return voca_count_year
+
+
+def total_counts(songs):
+    counts = count_per_year(songs).reset_index()
+    total = {}
+    for vocaloid in VOCALOIDS:
+        total[vocaloid] = counts[vocaloid].sum()
+
+    print(total)
+    return total
 
 def share_per_year(songs):
     valid_data = songs[["year", "vocaloid"]].dropna()
@@ -50,6 +60,16 @@ def share_per_year(songs):
     return voca_share_year
 
 
+def plot_total_counts(songs):
+    data = pd.Series(total_counts(songs))
+    fig, ax = plt.subplots(1)
+
+    data.plot(ax=ax, kind="bar")
+    plt.xlabel("Vocal Synthesizer")
+    plt.ylabel("Total Number of Songs with Synthesizer")
+    plt.title("Selected Vocal Synthesizers Total Count")
+    plt.savefig("vocal_synth_counts.png", bbox_inches="tight")
+
 def plot_count_per_year(songs):
     data = count_per_year(songs).reset_index()
     # data = data.set_index("year")
@@ -57,7 +77,7 @@ def plot_count_per_year(songs):
 
     data.plot(ax=ax, x="year")
     plt.xlabel("Published Year")
-    plt.ylabel("Songs with synthesizer")
+    plt.ylabel("Songs with Synthesizer")
     plt.xticks(data["year"], rotation=45)
     plt.title("Selected Vocal Synthesizers Count by Year")
 
@@ -67,7 +87,9 @@ def plot_count_per_year(songs):
 
 def main():
     songs = pd.read_csv("songs.csv")
+    total_counts(songs)
     plot_count_per_year(songs)
+    plot_total_counts(songs)
 
 
 if __name__ == "__main__":
