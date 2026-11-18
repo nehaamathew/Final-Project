@@ -31,6 +31,13 @@ def get_voca_count(songs):
     return pd.Series(vocaloid_count)
 
 
+def count_per_year(songs):
+    valid_data = songs[["year", "vocaloid"]].dropna()
+    voca_count_year = valid_data.groupby("year").apply(get_voca_count)
+
+    print(voca_count_year)
+    return voca_count_year
+
 def share_per_year(songs):
     valid_data = songs[["year", "vocaloid"]].dropna()
     voca_share_year = valid_data.groupby("year").apply(get_voca_count)
@@ -43,16 +50,16 @@ def share_per_year(songs):
     return voca_share_year
 
 
-def plot_share_per_year(songs):
-    data = share_per_year(songs).reset_index()
+def plot_count_per_year(songs):
+    data = count_per_year(songs).reset_index()
     # data = data.set_index("year")
     fig, ax = plt.subplots(1)
 
     data.plot(ax=ax, x="year")
     plt.xlabel("Published Year")
-    plt.ylabel("Songs with synthesizer (%)")
+    plt.ylabel("Songs with synthesizer")
     plt.xticks(data["year"], rotation=45)
-    plt.title("Selected Vocal Synthesizers Share by Year")
+    plt.title("Selected Vocal Synthesizers Count by Year")
 
 
     plt.savefig("vocal_synth_trends.png", bbox_inches="tight")
@@ -60,7 +67,7 @@ def plot_share_per_year(songs):
 
 def main():
     songs = pd.read_csv("songs.csv")
-    plot_share_per_year(songs)
+    plot_count_per_year(songs)
 
 
 if __name__ == "__main__":
