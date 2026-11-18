@@ -23,6 +23,7 @@ def get_song_length_data(songs):
         "min", "25%", "50%", "75%", "max", "std"
     ]]
     print(number_summary)
+    return (number_summary)
 
 
 def plot_song_length(songs):
