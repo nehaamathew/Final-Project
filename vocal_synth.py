@@ -64,7 +64,7 @@ def plot_total_counts(songs):
     data = pd.Series(total_counts(songs))
     fig, ax = plt.subplots(1)
 
-    data.plot(ax=ax, kind="bar")
+    data.plot(ax=ax, kind="bar", rot=0)
     plt.xlabel("Vocal Synthesizer")
     plt.ylabel("Total Number of Songs with Synthesizer")
     plt.title("Selected Vocal Synthesizers Total Count")
