@@ -1,39 +1,112 @@
-import pandas as pd
+"""
+Neha Mathew and Esther Wong
+CSE 163, Section AE
+Tests vocal synth counts, genre counts, and song length statistics.
+"""
 
+import pandas as pd
 
 from genre import get_genre_data
 from song_length import get_song_length_data
 from vocal_synth import count_per_year
 
 
-def main():
-    songs = pd.DataFrame({
-        "song_id": [1, 2, 3, 4],
-        "year": [2020, 2020, 2020, 2021],
-        "genre": ["rock|pop", "folk", None, "pop"],
-        "popular": [1, 0, 1, 0],
-        "duration_seconds": [100, 200, 0, 240],
-        "vocaloid": ["GUMI|Kagamine Rin", "GUMI", None, "Kasane Teto"],
-    })
+def make_test_songs():
+    """
+    Return test song data
+    """
+    columns = ["song_id", "year", "genre", "duration_seconds", "vocaloid"]
+    rows = [
+        (1, 2020, "rock|pop", 100, "GUMI|Kagamine Rin"),
+        (2, 2020, "jazz", 110, "GUMI"),
+        (3, 2020, None, 120, None),
+        (4, 2020, "pop|j-pop", 130, "Kagamine Rin"),
+        (5, 2020, "metal", 140, "Kasane Teto"),
+        (6, 2021, "electropop|edm", 150, "Kasane Teto|Kasane Teto SV"),
+        (7, 2021, "rock", 160, "Kasane Teto SV"),
+        (8, 2021, "JAZZ|pop", 170, "Hatsune Miku"),
+        (9, 2021, "j-pop", 180, "GUMI"),
+        (10, 2021, None, 190, None),
+        (11, 2022, "traditional japanese music style", 200,
+         "Kagamine Rin Append (Power)"),
+        (12, 2022, "edm|metal", 210, "GUMI|Kasane Teto"),
+        (13, 2022, "rock|electropop", 0, "Kagamine Rin"),
+        (14, 2022, "pop", -10, "Hatsune Miku"),
+        (15, 2022, "j-pop|rock", None, None),
+    ]
+    return pd.DataFrame(rows, columns=columns)
 
+
+def test_count_per_year(songs):
+    """
+    Test count_per_yearo on song data.
+    Includes cases for duets, voicebank versions, and missing credits.
+    """
     counts = count_per_year(songs)
+    assert set(counts.index) == {2020, 2021, 2022}
+
+    # The first song counts once for GUMI and once for Rin.
     assert counts.loc[2020, "GUMI"] == 2
-    assert counts.loc[2020, "Kagamine Rin"] == 1
-    assert counts.loc[2021, "Kasane Teto"] == 1
+    assert counts.loc[2020, "Kagamine Rin"] == 2
+    assert counts.loc[2020, "Kasane Teto"] == 1
 
+    # Song 6 lists two Teto versions. Songs 6 and 7 each count once.
+    assert counts.loc[2021, "Kasane Teto"] == 2
+    assert counts.loc[2021, "GUMI"] == 1
+    assert counts.loc[2021, "Kagamine Rin"] == 0
+
+    # Rin Append counts toward Rin's total.
+    assert counts.loc[2022, "Kagamine Rin"] == 2
+    assert counts.loc[2022, "GUMI"] == 1
+    assert counts.loc[2022, "Kasane Teto"] == 1
+
+
+def test_get_genre_data(songs):
+    """
+    Test get_genre_data oon song data.
+    Includes cases with mixed-case tags.
+    """
     counts = get_genre_data(songs)
-    assert counts["pop"] == 2
-    assert counts["rock"] == 1
-    assert counts["jazz"] == 0
 
+    assert counts == {
+        "pop": 4,
+        "j-pop": 3,
+        "rock": 4,
+        "electropop": 2,
+        "edm": 2,
+        "jazz": 2,
+        "metal": 2,
+        "traditional japanese music style": 1,
+    }
+
+    untagged_songs = songs.loc[songs["genre"].isna()]
+    untagged_counts = get_genre_data(untagged_songs)
+    assert untagged_counts["pop"] == 0
+    assert sum(untagged_counts.values()) == 0
+
+
+def test_get_song_length_data(songs):
+    """
+    Check the summary after excluding zero, negative, and missing lengths
+    """
     summary = get_song_length_data(songs)
-    assert summary["min"] == 100
-    assert summary["25%"] == 150
-    assert summary["50%"] == 200
-    assert summary["75%"] == 220
-    assert summary["max"] == 240
-    assert round(summary["std"], 2) == 72.11
 
+    assert summary["min"] == 100
+    assert summary["25%"] == 127.5
+    assert summary["50%"] == 155
+    assert summary["75%"] == 182.5
+    assert summary["max"] == 210
+    assert round(summary["std"], 2) == 36.06
+
+
+def main():
+    """
+    Run all three EDA tests on test song data
+    """
+    songs = make_test_songs()
+    test_count_per_year(songs)
+    test_get_genre_data(songs)
+    test_get_song_length_data(songs)
     print("All EDA tests passed!")
 
 

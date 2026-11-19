@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 
 def get_song_length_data(songs):
     """
-    Print and return summary statistics (5 number summary and standard deviation) 
-    for positive song lengths in seconds.
+    Print and return summary statistics of a 5 number summary and
+    standard deviation for positive song lengths in seconds.
     """
     valid_data = songs.dropna(subset=["duration_seconds"]).copy()
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]

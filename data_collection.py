@@ -62,7 +62,7 @@ def get_popular_ids():
 def make_row(song, year, popular_ids):
     """
     Return a CSV row for the song and year, using popular_ids to keep
-    track of which songs are popular. 
+    track of which songs are popular.
     """
     genres = []
     for usage in song.get("tags", []) or []:

@@ -1,7 +1,7 @@
 """
 Neha Mathew and Esther Wong
 CSE 163, Section AE
-Counts selected genre tags and plots how the percentages of 
+Counts selected genre tags and plots how the percentages of
 songs with those genres change over time for both general
 song data and popular song data.
 """
