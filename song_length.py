@@ -16,13 +16,10 @@ def get_song_length_data(songs):
     """
     valid_data = songs.dropna(subset=["duration_seconds"]).copy()
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
-
-    # tried collecting number summary using .describe()
     data_descript = valid_data["duration_seconds"].describe()
     number_summary = data_descript.loc[[
         "min", "25%", "50%", "75%", "max", "std"
     ]]
-    print(number_summary)
     return (number_summary)
 
 
@@ -33,8 +30,6 @@ def plot_yearly_song_length(songs):
     valid_data = songs.dropna(subset=["year", "duration_seconds"])
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
     mean_length_by_year = valid_data.groupby("year")["duration_seconds"].mean()
-    print("Mean song length for each year:")
-    print(mean_length_by_year)
     years = mean_length_by_year.index
     mean_song_lengths = mean_length_by_year.values
 

@@ -31,8 +31,6 @@ def get_genre_data(songs):
         for genre in song_genres:
             if genre in genre_count:
                 genre_count[genre] += 1
-
-    print(genre_count)
     return genre_count
 
 

@@ -1,5 +1,5 @@
 """
-Neha Matthew & Esther Wong
+Neha Mathew & Esther Wong
 CSE 163 AE
 This file analyses data and provides statistics from songs.csv,
 particularly for the vocal synthesizers found in the dataset.

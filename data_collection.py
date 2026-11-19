@@ -67,7 +67,6 @@ def make_row(song, year, popular_ids):
     genres = []
     for usage in song.get("tags", []) or []:
         tag = usage["tag"]
-        # Checks if a tag is a genre tag and adds to list of genres
         if tag.get("categoryName") == "Genres":
             genres.append(tag["name"])
     vocaloids = []
