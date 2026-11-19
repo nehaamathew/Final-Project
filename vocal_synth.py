@@ -97,7 +97,9 @@ def plot_total_counts(songs):
     plt.xlabel("Vocal Synthesizer")
     plt.ylabel("Total Number of Songs with Synthesizer")
     plt.title("Selected Vocal Synthesizers Total Count")
+
     plt.savefig("vocal_synth_counts.png", bbox_inches="tight")
+    plt.close(fig)
 
 
 def plot_count_per_year(songs):
@@ -105,7 +107,6 @@ def plot_count_per_year(songs):
     Plots a graph for the counts per year for selected vocal synthesizers.
     """
     data = count_per_year(songs).reset_index()
-    # data = data.set_index("year")
     fig, ax = plt.subplots(1)
 
     data.plot(ax=ax, x="year")
@@ -115,6 +116,7 @@ def plot_count_per_year(songs):
     plt.title("Selected Vocal Synthesizers Count by Year")
 
     plt.savefig("vocal_synth_count_year.png", bbox_inches="tight")
+    plt.close(fig)
 
 
 def plot_share_per_year(songs):
@@ -122,7 +124,6 @@ def plot_share_per_year(songs):
     Plots a graph for the share per year for selected vocal synthesizers.
     """
     data = share_per_year(songs).reset_index()
-    # data = data.set_index("year")
     fig, ax = plt.subplots(1)
 
     data.plot(ax=ax, x="year")
@@ -136,9 +137,20 @@ def plot_share_per_year(songs):
 
 def main():
     songs = pd.read_csv("songs.csv")
-    print(total_counts(songs))
+    print("Total number of songs featuring selected vocal synthesizers")
+    print(pd.Series(total_counts(songs)))
+    print()
+
+    print("Total number of songs per year featuring selected vocal "
+          "synthesizers")
     print(count_per_year(songs))
+    print()
+
+    print("Share of songs per year featuring selected vocal "
+          "synthesizers")
     print(share_per_year(songs))
+    print()
+
     plot_count_per_year(songs)
     plot_total_counts(songs)
     plot_share_per_year(songs)
