@@ -8,6 +8,7 @@ import pandas as pd
 
 from genre import get_genre_data
 from song_length import get_song_length_data
+from vocal_synth import total_counts
 from vocal_synth import count_per_year
 
 
@@ -35,6 +36,21 @@ def make_test_songs():
         (15, 2022, "j-pop|rock", None, None),
     ]
     return pd.DataFrame(rows, columns=columns)
+
+
+def test_total_counts(songs):
+    """Check the number of songs featuring each synth across all years."""
+    counts = total_counts(songs)
+    assert counts["GUMI"] == 4
+    assert counts["Kagamine Rin"] == 4
+    assert counts["Kasane Teto"] == 4
+
+    # Song 6 lists two Teto voicebanks but should only
+    # count towards her use once, giving her 2 uses total.
+    teto_song = songs.loc[songs["song_id"] == 6]
+    assert total_counts(teto_song) == {
+        "GUMI": 0, "Kagamine Rin": 0, "Kasane Teto": 1
+    }
 
 
 def test_count_per_year(songs):
