@@ -39,18 +39,21 @@ def make_test_songs():
 
 def test_count_per_year(songs):
     """
-    Test count_per_yearo on song data.
-    Includes cases for duets, voicebank versions, and missing credits.
+    Test count_per_year on song data.
+    Includes cases for multiple voicebanks  
+    different voicebank versions,
+    and missing credits.
     """
     counts = count_per_year(songs)
     assert set(counts.index) == {2020, 2021, 2022}
 
-    # The first song counts once for GUMI and once for Rin.
+    # The first song counts once for GUMI and once for Rin
     assert counts.loc[2020, "GUMI"] == 2
     assert counts.loc[2020, "Kagamine Rin"] == 2
     assert counts.loc[2020, "Kasane Teto"] == 1
 
-    # Song 6 lists two Teto versions. Songs 6 and 7 each count once.
+    # Song 6 lists two Teto voicebanks but should only
+    # count towards her use once, giving her 2 uses total.
     assert counts.loc[2021, "Kasane Teto"] == 2
     assert counts.loc[2021, "GUMI"] == 1
     assert counts.loc[2021, "Kagamine Rin"] == 0
@@ -63,8 +66,8 @@ def test_count_per_year(songs):
 
 def test_get_genre_data(songs):
     """
-    Test get_genre_data oon song data.
-    Includes cases with mixed-case tags.
+    Test get_genre_data on song data.
+    Includes checking handling of untagged songs.
     """
     counts = get_genre_data(songs)
 
@@ -87,7 +90,8 @@ def test_get_genre_data(songs):
 
 def test_get_song_length_data(songs):
     """
-    Check the summary after excluding zero, negative, and missing lengths
+    Check the summary after excluding zero, negative
+    and missing lengths
     """
     summary = get_song_length_data(songs)
 
