@@ -1,7 +1,13 @@
+"""
+Neha Mathew and Esther Wong
+CSE 163, Section AE
+Collects highly rated songs from VocaDB and saves them to a CSV.
+"""
+
 import pandas as pd
 import requests
 
-START_COLLECTION = True
+START_COLLECTION = False
 
 START_YEAR = 2007
 END_YEAR = 2025
@@ -17,14 +23,19 @@ COLUMNS = ["song_id", "title", "year", "duration_seconds",
 
 
 def get_data(url, parameters):
-    """Requests data according to a dictionary of parameters and
-    returns a dictionary"""
+    """
+    Requests data according to a dictionary of parameters and
+    returns a dictionary.
+    """
     response = requests.get(url, params=parameters, timeout=60)
     response.raise_for_status()
     return response.json()
 
 
 def get_popular_ids():
+    """
+    Return the set of song IDs in the selected VocaDB popularity pools.
+    """
     popular_ids = set()
     for id in POPULAR_IDS:
         parameters = {"songTypes": "Original", "maxResults": 1,
@@ -48,8 +59,11 @@ def get_popular_ids():
     return popular_ids
 
 
-def make_row(song, year, page, popular_ids):
-    """Makes one CSV row"""
+def make_row(song, year, popular_ids):
+    """
+    Return a CSV row for the song and year, using popular_ids to keep
+    track of which songs are popular. 
+    """
     genres = []
     for usage in song.get("tags", []) or []:
         tag = usage["tag"]
@@ -75,8 +89,10 @@ def make_row(song, year, page, popular_ids):
 
 
 def main():
-    """Collect the first score ranked songs in batches for each year
-    and saves song data in a CSV"""
+    """
+    Collect the top score ranked songs in batches for each year
+    and saves song data in a CSV.
+    """
     if not START_COLLECTION:
         print("Set START_COLLECTION = True to run data collection")
         return

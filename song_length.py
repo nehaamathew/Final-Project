@@ -1,20 +1,19 @@
+
+"""
+Neha Mathew and Esther Wong
+CSE 163, Section AE
+Summarizes song durations and plots mean song length by publication year.
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def main():
-    songs = pd.read_csv("songs.csv")
-    get_song_length_data(songs)
-    plot_yearly_song_length(songs)
-    plot_song_length(songs)
-
-
-def evaluate_data(data):
-    assert data["song_id"].is_unique
-    print("Number of songs collected: ", len(data))
-
-
 def get_song_length_data(songs):
+    """
+    Print and return summary statistics (5 number summary and standard deviation) 
+    for positive song lengths in seconds.
+    """
     valid_data = songs.dropna(subset=["duration_seconds"]).copy()
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
 
@@ -27,12 +26,10 @@ def get_song_length_data(songs):
     return (number_summary)
 
 
-def plot_song_length(songs):
-    valid_data = songs.dropna("duration_seconds")
-    valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
-
-
 def plot_yearly_song_length(songs):
+    """
+    Print mean song length by year and save a line plot.
+    """
     valid_data = songs.dropna(subset=["year", "duration_seconds"])
     valid_data = valid_data.loc[valid_data["duration_seconds"] > 0]
     mean_length_by_year = valid_data.groupby("year")["duration_seconds"].mean()
@@ -48,6 +45,12 @@ def plot_yearly_song_length(songs):
     plt.ylabel("Song duration (seconds)")
     plt.savefig("mean_yearly_length.png", bbox_inches="tight")
     plt.close()
+
+
+def main():
+    songs = pd.read_csv("songs.csv")
+    get_song_length_data(songs)
+    plot_yearly_song_length(songs)
 
 
 if __name__ == "__main__":

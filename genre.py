@@ -1,3 +1,11 @@
+"""
+Neha Mathew and Esther Wong
+CSE 163, Section AE
+Counts selected genre tags and plots how the percentages of 
+songs with those genres change over time for both general
+song data and popular song data.
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -6,25 +14,10 @@ SELECT_GENRES = ["pop", "j-pop", "rock", "electropop", "edm",
                  "traditional japanese music style"]
 
 
-def main():
-    songs = pd.read_csv("songs.csv")
-    popular_songs = songs.loc[songs["popular"] == 1]
-    get_genre_data(songs)
-    plot_genre_counts(songs)
-
-    plot_genre_trends(
-        songs,
-        "Genre Share Among All Tagged Songs",
-        "genre_trends.png",
-    )
-    plot_genre_trends(
-        popular_songs,
-        "Genre Share Among Popular Tagged Songs",
-        "pop_genre_trends.png",
-    )
-
-
 def get_genre_data(songs):
+    """
+    Return a dictionary of selected genre tag counts in songs.
+    """
     valid_data = songs["genre"].dropna()
     genre_count = {}
 
@@ -44,6 +37,9 @@ def get_genre_data(songs):
 
 
 def plot_genre_counts(songs):
+    """
+    Plots a bar chart of selected genre tag counts in songs.
+    """
     genre_counts = get_genre_data(songs)
     counts = pd.Series(genre_counts).sort_values()
 
@@ -62,6 +58,10 @@ def plot_genre_counts(songs):
 
 
 def plot_genre_trends(songs, title, filename):
+    """
+    Plots the yearly percentage of tagged songs with each selected genre.
+    Use title for the plot and save it to filename.
+    """
     valid_data = songs.dropna(subset=["song_id", "year", "genre"])
     yearly_genre_share = {}
 
@@ -90,8 +90,6 @@ def plot_genre_trends(songs, title, filename):
                 for genre, count in genre_counts.items()
             }
 
-        print(f"{title}, {year}: {total_tagged_songs} tagged songs")
-
     years = sorted(yearly_genre_share)
     fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -106,6 +104,23 @@ def plot_genre_trends(songs, title, filename):
     ax.legend(title="Genre", loc="upper left", bbox_to_anchor=(1, 1))
     fig.savefig(filename, bbox_inches="tight")
     plt.close(fig)
+
+
+def main():
+    songs = pd.read_csv("songs.csv")
+    popular_songs = songs.loc[songs["popular"] == 1]
+    plot_genre_counts(songs)
+
+    plot_genre_trends(
+        songs,
+        "Genre Share Among All Tagged Songs",
+        "genre_trends.png",
+    )
+    plot_genre_trends(
+        popular_songs,
+        "Genre Share Among Popular Tagged Songs",
+        "pop_genre_trends.png",
+    )
 
 
 if __name__ == "__main__":

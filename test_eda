@@ -27,7 +27,6 @@ def main():
     assert counts["jazz"] == 0
 
     summary = get_song_length_data(songs)
-
     assert summary["min"] == 100
     assert summary["25%"] == 150
     assert summary["50%"] == 200
